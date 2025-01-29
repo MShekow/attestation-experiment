@@ -27,3 +27,6 @@ archives:
 # Configure the checksums filename, to allow the attestation to pick up the correct filename
 checksum:
   name_template: checksums.txt
+
+sboms:
+  - artifacts: binary
