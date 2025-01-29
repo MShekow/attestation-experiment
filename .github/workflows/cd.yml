@@ -24,6 +24,9 @@ jobs:
           # renovate: datasource=golang-version depName=go versioning=semver
           go-version: "1.23.5"
 
+      - name: Download Syft (to generate SBOMs)
+        uses: anchore/sbom-action/download-syft@v0
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
