@@ -5,7 +5,9 @@ on:
       - 'v*'
 
 permissions:
-  contents: write
+  contents: write  # needed to create/upload release
+  id-token: write  # needed for attestations
+  attestations: write  # needed for attestations
 
 jobs:
   goreleaser:
@@ -31,3 +33,7 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-checksums: ./dist/checksums.txt
