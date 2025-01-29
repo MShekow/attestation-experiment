@@ -36,5 +36,5 @@ jobs:
 
       - uses: actions/attest-build-provenance@v2
         with:
-#          subject-checksums: ./dist/checksums.txt
-          subject-path: ./dist/*
+          subject-checksums: ./dist/checksums.txt
+#          subject-path: ./dist/*
