@@ -15,6 +15,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: download Cosign
+        uses: sigstore/cosign-installer@v3
       - name: Download and verify GitHub CLI
         run: |
           set -e
@@ -33,7 +35,7 @@ jobs:
           
           # The "gh" CLI is in a "gh_<version>_<os>_<cpu-arch>/bin subdirectory, so we extract it directly
           tar --wildcards --strip-components=2 -xzf github-cli.tar.gz 'gh_*/bin/gh'
-
+          ls -la
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
