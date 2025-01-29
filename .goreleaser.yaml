@@ -30,3 +30,5 @@ checksum:
 
 sboms:
   - artifacts: binary
+    documents:
+      - "{{ .ArtifactName }}.sbom.json"
