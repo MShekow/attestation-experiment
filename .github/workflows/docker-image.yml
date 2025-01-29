@@ -58,8 +58,8 @@ jobs:
         uses: anchore/sbom-action@v0
         with:
           image: ghcr.io/mshekow/temp-test-image2:latest
-          format: 'cyclonedx-json'
-          output-file: 'sbom.cyclonedx.json'
+          format: 'spdx-json'
+          output-file: 'sbom.json'
 
       - name: Attest
         uses: actions/attest-sbom@v2
@@ -67,6 +67,6 @@ jobs:
         with:
           subject-name: ghcr.io/mshekow/temp-test-image2
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
-          sbom-path: 'sbom.cyclonedx.json'
+          sbom-path: 'sbom.json'
           push-to-registry: true
 
