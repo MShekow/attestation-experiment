@@ -1,19 +1,17 @@
-builds:
-  - goos:
-      - linux
-      - darwin
-      - windows
+version: 2
 
-    # Defaults are 386, amd64 and arm64.
-    goarch:
-      - amd64
-      - arm
-      - arm64
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
 
     # Default is only 6.
     goarm:
-      - "6"
-      - "7"
+      - 6
+      - 7
 
     # Default is only v1.
     goamd64:
@@ -21,22 +19,7 @@ builds:
       - v2
       - v3
 
-    # Compile static binary that also works e.g. on Alpine Linux
-    env:
-      - CGO_ENABLED=0
-
-    # List of combinations of GOOS + GOARCH + GOARM to ignore.
-    # Default is empty.
-#    ignore:
-#      - goos: darwin
-#        goarch: 386
-#      - goos: linux
-#        goarch: arm
-#        goarm: 7
-#      - goarm: mips64
-#      - gomips: hardfloat
-#      - goamd64: v4
-
 # Disable compressing builds as ".tar.gz" file
 archives:
-  - format: binary
+  - formats:
+    - binary
