@@ -38,7 +38,7 @@ jobs:
           # The "gh" CLI is in a "gh_<version>_<os>_<cpu-arch>/bin subdirectory, so we extract it directly
           tar --wildcards --strip-components=2 -xzf github-cli.tar.gz 'gh_*/bin/gh'
           
-          ./gh attestation verify github-cli.tar.gz --repo cli/cli
+          ./gh attestation verify github-cli.tar.gz --repo cli/clii
           echo success
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
