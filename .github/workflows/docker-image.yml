@@ -25,9 +25,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/temp-test-image
+          images: ghcr.io/${{ github.repository_owner }}/temp-test-image2
           tags: |
-            type=sha,format=long
             type=raw,value=latest
 
       - name: Login to GitHub Container Registry
@@ -48,10 +47,26 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
 
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v2
+#      - name: Generate artifact attestation
+#        uses: actions/attest-build-provenance@v2
+#        with:
+#          subject-name: ghcr.io/${{ github.repository_owner }}/temp-test-image
+#          subject-digest: ${{ steps.build-and-push.outputs.digest }}
+#          push-to-registry: true
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
         with:
-          subject-name: ghcr.io/${{ github.repository_owner }}/temp-test-image
+          image: ghcr.io/${{ github.repository_owner }}/temp-test-image2:latest
+          format: 'cyclonedx-json'
+          output-file: 'sbom.cyclonedx.json'
+
+      - name: Attest
+        uses: actions/attest-sbom@v2
+        id: attest
+        with:
+          subject-name: ghcr.io/${{ github.repository_owner }}/temp-test-image2
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
+          sbom-path: 'sbom.cyclonedx.json'
           push-to-registry: true
 
