@@ -37,9 +37,15 @@ jobs:
           
           # The "gh" CLI is in a "gh_<version>_<os>_<cpu-arch>/bin subdirectory, so we extract it directly
           tar --wildcards --strip-components=2 -xzf github-cli.tar.gz 'gh_*/bin/gh'
-          
-          ./gh attestation verify github-cli.tar.gz --repo cli/clii
-          echo success
+
+      - name: Download some CLI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl -L -o goreleaser_Linux_arm64.tar.gz \
+            https://github.com/goreleaser/goreleaser/releases/download/v2.6.1/goreleaser_Linux_arm64.tar.gz
+          ./gh attestation verify goreleaser_Linux_arm64.tar.gz --repo goreleaser/goreleaser
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
