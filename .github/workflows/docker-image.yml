@@ -101,3 +101,13 @@ jobs:
           sbom-path: 'sbom.json'
           push-to-registry: true
 
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign image with Cosign
+        env:
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          IMAGE: ghcr.io/mshekow/temp-test-image2
+        run: |
+          cosign sign --yes --recursive ${IMAGE}@${DIGEST}
+
