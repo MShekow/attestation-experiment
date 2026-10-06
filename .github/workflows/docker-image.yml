@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: download Cosign
-        uses: sigstore/cosign-installer@v3
+      #- name: download Cosign
+      #  uses: sigstore/cosign-installer@v3
 #      - name: Download and verify GitHub CLI
 #        env:
 #          GH_TOKEN: ${{ github.token }}
@@ -47,21 +47,21 @@ jobs:
 #          ./gh attestation verify goreleaser_Linux_arm64.tar.gz --repo goreleaser/goreleaser
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Set Docker metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ github.repository_owner }}/temp-test-image2
+          images: ghcr.io/${{ github.repository_owner }}/temp-test-image
           tags: |
             type=raw,value=latest
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
 
       - name: Build and push the container
         id: build-and-push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
@@ -78,33 +78,33 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
 
-#      - name: Generate artifact attestation
-#        uses: actions/attest-build-provenance@v2
-#        with:
-#          subject-name: ghcr.io/${{ github.repository_owner }}/temp-test-image
-#          subject-digest: ${{ steps.build-and-push.outputs.digest }}
-#          push-to-registry: true
-
-      - name: Generate SBOM
-        uses: anchore/sbom-action@v0
+      - name: Generate build provenance attestation
+        uses: actions/attest@v4
         with:
-          image: ghcr.io/mshekow/temp-test-image2:latest
-          format: 'spdx-json'
-          output-file: 'sbom.json'
-
-      - name: Attest
-        uses: actions/attest-sbom@v2
-        id: attest
-        with:
-          subject-name: ghcr.io/mshekow/temp-test-image2
+          subject-name: ghcr.io/${{ github.repository_owner }}/temp-test-image
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
-          sbom-path: 'sbom.json'
           push-to-registry: true
 
-      - name: Sign image with Cosign
-        env:
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-          IMAGE: ghcr.io/mshekow/temp-test-image2
-        run: |
-          cosign sign --yes --recursive ${IMAGE}@${DIGEST}
+      #- name: Generate SBOM
+      #  uses: anchore/sbom-action@v0
+      #  with:
+      #    image: ghcr.io/${{ github.repository_owner }}/temp-test-image:latest
+      #    format: 'spdx-json'
+      #    output-file: 'sbom.json'
+
+      #- name: Attest
+      #  uses: actions/attest-sbom@v2
+      #  id: attest
+      #  with:
+      #    subject-name: ghcr.io/${{ github.repository_owner }}/temp-test-image
+      #    subject-digest: ${{ steps.build-and-push.outputs.digest }}
+      #    sbom-path: 'sbom.json'
+      #    push-to-registry: true
+
+      #- name: Sign image with Cosign
+      #  env:
+      #    DIGEST: ${{ steps.build-and-push.outputs.digest }}
+      #    IMAGE: ghcr.io/mshekow/temp-test-image2
+      #  run: |
+      #    cosign sign --yes --recursive ${IMAGE}@${DIGEST}
 
